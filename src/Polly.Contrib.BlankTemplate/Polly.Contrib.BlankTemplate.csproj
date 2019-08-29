@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.1;netstandard2.0</TargetFrameworks>
+    <AssemblyName>Polly.Contrib.BlankTemplate</AssemblyName>
+    <RootNamespace>Polly.Contrib.BlankTemplate</RootNamespace>
+    <Version>0.2.0</Version>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+    <FileVersion>0.2.0.0</FileVersion>
+    <InformationalVersion>0.2.0.0</InformationalVersion>
+    <PackageVersion>0.2.0</PackageVersion>
+    <Company>App vNext</Company>
+    <Copyright>Copyright (c) 2019, App vNext and contributors</Copyright>
+    <Description>Polly.Contrib.BlankTemplate is a blank template for Polly.Contrib contributions, integrating with the Polly resilience project for .NET</Description>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Authors>App vNext</Authors>
+    <AssemblyOriginatorKeyFile>..\Polly.Contrib.BlankTemplate.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup Label="SourceLink">
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  <ItemGroup Label="SourceLink">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
+  </ItemGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
+    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Polly" Version="7.1.0" />
+  </ItemGroup>
+  <PropertyGroup Label="NuspecProperties">
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <AssemblyTitle>Polly.Contrib.BlankTemplate</AssemblyTitle>
+    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+    <PackageIconUrl>https://raw.github.com/App-vNext/Polly/master/Polly.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/Polly-Contrib/Polly.Contrib.BlankTemplate</PackageProjectUrl>
+    <PackageTags>Exception Resilience Transient Fault Policy</PackageTags>
+    <PackageReleaseNotes>See https://github.com/Polly-Contrib/Polly.Contrib.BlankTemplate/blob/master/CHANGELOG.md for details</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
