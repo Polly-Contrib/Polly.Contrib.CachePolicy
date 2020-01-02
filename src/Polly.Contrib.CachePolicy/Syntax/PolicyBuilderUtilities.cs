@@ -5,7 +5,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Teams.ServicesHub.Diagnostics.Core;
 using Polly.Contrib.CachePolicy.Builder;
 using Polly.Contrib.CachePolicy.Builder.AgingStrategy;
 using Polly.Contrib.CachePolicy.Models;
