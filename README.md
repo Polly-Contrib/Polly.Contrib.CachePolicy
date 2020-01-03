@@ -2,7 +2,6 @@
 
 - [Async cache policy](#async-cache-policy)
 	- [Purpose](#purpose)
-	- [Use cases](#use-cases)
 	- [Roadmap](#roadmap)
 	- [Operation](#operation)
 	- [Syntax](#syntax)
@@ -24,19 +23,13 @@
 		- [Cache null value](#cache-null-value)
 		- [Cache migration](#cache-migration)
 		- [Test with chaos tools](#test-with-chaos-tools)
-		- [Sample Integration PRs](#sample-integration-prs)
 
 <!-- /MarkdownTOC -->
 
 # Async cache policy
 
 ## Purpose
-The Microsoft.Teams.ServicesHub.Polly.AsyncCachePolicy is an implementation of read-through cache, also known as the cache-aside pattern. It provides a resiliency feature of elegantly fallback to return stale cache value when downstream services return errors or throw exceptions. 
-
-## Use cases
-AsyncCachePolicy could be used anywhere an IAsyncPolicy<TResult> Polly policy applies and seamlessly wrapped together with other Polly policies. It could be used in the following two cases: 
-1. Used as a Polly cache policy. 
-2. Used as a Polly cache policy with the capability to fallback to stale cache. 
+The Polly.Contrib.CachePolicy is an implementation of read-through cache, also known as the cache-aside pattern. It provides a resiliency feature of elegantly fallback to return stale cache value when downstream services return errors or throw exceptions. It could be used anywhere an IAsyncPolicy<TResult> Polly policy applies and seamlessly wrapped together with other Polly policies.
 
 ## Roadmap
 1. By default [Newtonsoft.Json serializer](https://www.newtonsoft.com/json) is used to serialize cache targets. In the future, consumers of this package will be able to plugin customized serializers. 
@@ -381,7 +374,3 @@ public TargetClassToOnboard FetchFromBackend(...)
 
 ### Test with chaos tools
 * Polly provides a chaos tool [Simmy](https://github.com/Polly-Contrib/Simmy) which could wrapped inside the AsyncCachePolicy to simulate dependency failures. 
-
-### Sample Integration PRs 
-* Integrate into [Teams AuthSvc's settingsStore dependency on TenantRegion API and TenantAdminSkuSettingsV2 API](https://domoreexp.visualstudio.com/Teamspace/_git/teams-authsvc/pullrequest/161620?_a=overview)
-* Integrate into [Teams AuthSvc's AAD dependency on UserLicenseDetailsDetails API](https://domoreexp.visualstudio.com/Teamspace/_git/teams-authsvc/pullrequest/164210?_a=overview)
