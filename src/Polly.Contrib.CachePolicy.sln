@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Polly.Contrib.CachePolicy", "Polly.Contrib.CachePolicy\Polly.Contrib.CachePolicy.csproj", "{B7730E1D-0796-4151-95C3-1C6E7DE897B9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Polly.Contrib.CachePolicy.Specs", "Polly.Contrib.BlankTemplate.Specs\Polly.Contrib.CachePolicy.Specs.csproj", "{ED587F9F-BBE6-4715-9FAA-BAAEFE288A73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Polly.Contrib.CachePolicy.Specs", "Polly.Contrib.CachePolicy.Specs\Polly.Contrib.CachePolicy.Specs.csproj", "{ED587F9F-BBE6-4715-9FAA-BAAEFE288A73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

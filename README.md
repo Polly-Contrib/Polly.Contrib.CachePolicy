@@ -1,6 +1,6 @@
 ﻿<!-- MarkdownTOC -->
 
-- [Async cache policy](#async-cache-policy)
+- [Polly.Contrib.CachePolicy](#pollycontribcachepolicy)
 	- [Purpose](#purpose)
 	- [Roadmap](#roadmap)
 	- [Operation](#operation)
@@ -26,7 +26,7 @@
 
 <!-- /MarkdownTOC -->
 
-# Async cache policy
+# Polly.Contrib.CachePolicy
 
 ## Purpose
 The Polly.Contrib.CachePolicy is an implementation of read-through cache, also known as the cache-aside pattern. It provides a resiliency feature of elegantly fallback to return stale cache value when downstream services return errors or throw exceptions. It could be used anywhere an IAsyncPolicy<TResult> Polly policy applies and seamlessly wrapped together with other Polly policies.
