@@ -9,11 +9,6 @@ namespace Polly.Contrib.CachePolicy.Providers.Logging
         /// <summary>
         /// Logs the given metric
         /// </summary>
-        void LogMetric(string metricName, long metricValue);
-
-        /// <summary>
-        /// Logs the given metric
-        /// </summary>
         /// <param name="metricName">Metric name</param>
         /// <param name="dimensions">
         /// Dimensions of the metric - Properties which would give us a deeper insight into what the metric is about and 
