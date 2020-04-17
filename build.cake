@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -17,16 +17,14 @@ var configuration = Argument<string>("configuration", "Release");
 //////////////////////////////////////////////////////////////////////
 
 #addin "Cake.FileHelpers"
-#addin "System.Text.Json"
 #addin nuget:?package=Cake.Yaml
 #addin nuget:?package=YamlDotNet&version=5.2.1
-using System.Text.Json;
 
 ///////////////////////////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
 ///////////////////////////////////////////////////////////////////////////////
 
-var projectName = "Polly.Contrib.BlankTemplate";
+var projectName = "Polly.Contrib.CachePolicy";
 
 var solutions = GetFiles("./**/*.sln");
 var solutionPaths = solutions.Select(solution => solution.GetDirectory());
@@ -144,7 +142,9 @@ Task("__UpdateAssemblyVersionInformation")
     Information("FullSemVer -> {0}", gitVersionOutput["FullSemVer"]);
     Information("AssemblySemVer -> {0}", gitVersionOutput["AssemblySemVer"]);
 
-    appveyorBuildNumber = gitVersionOutput["FullSemVer"].ToString();
+    appveyorBuildNumber = gitVersionOutput["BranchName"].ToString().Equals("master", StringComparison.OrdinalIgnoreCase)
+        ? gitVersionOutput["FullSemVer"].ToString() 
+        : gitVersionOutput["InformationalVersion"].ToString();
     nugetVersion = gitVersionOutput["NuGetVersion"].ToString();
     assemblyVersion = gitVersionOutput["Major"].ToString() + ".0.0.0";
     assemblySemver = gitVersionOutput["AssemblySemVer"].ToString();
