@@ -119,7 +119,7 @@ Task("__UpdateAssemblyVersionInformation")
         StartProcess(gitVersionPath, gitVersionSettings, out outputLines);
 
         var output = string.Join("\n", outputLines);
-        gitVersionOutput = new JsonParser().Parse<Dictionary<string, object>>(output);
+        gitVersionOutput = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(output);
     }
     catch
     {
