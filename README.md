@@ -1,14 +1,20 @@
 ﻿<!-- MarkdownTOC -->
 
-- [Polly.Contrib.CachePolicy](#pollycontribcachepolicy)
+- [Introduction](#introduction)
+- [Async cache policy](#async-cache-policy)
   - [Purpose](#purpose)
+  - [Motivation](#motivation)
   - [Roadmap](#roadmap)
   - [Operation](#operation)
   - [Syntax](#syntax)
     - [Onboard cache target](#onboard-cache-target)
+      - [Using Newtonsoft based serialization](#using-newtonsoft-based-serialization)
+      - [Using Protobuf-net and LZ4.Pickler based serialization](#using-protobuf-net-and-lz4pickler-based-serialization)
     - [Build policy](#build-policy)
       - [Builder overview](#builder-overview)
       - [Use builder](#use-builder)
+        - [PlaintextCacheProvider](#plaintextcacheprovider)
+        - [BinaryCacheProvider](#binarycacheprovider)
     - [Configure policy](#configure-policy)
       - [Configure cache policy with FixedAgingStrategy](#configure-cache-policy-with-fixedagingstrategy)
       - [Configure multiple cache policies](#configure-multiple-cache-policies)
@@ -18,6 +24,9 @@
     - [ICacheProvider](#icacheprovider)
     - [ILoggingProvider](#iloggingprovider)
     - [IAgingStrategy](#iagingstrategy)
+    - [Serializers](#serializers)
+      - [IPlaintextSerializer and IPlaintextCompressor](#iplaintextserializer-and-iplaintextcompressor)
+      - [IBinarySerializer and IBinaryCompressor](#ibinaryserializer-and-ibinarycompressor)
   - [Usage recommendations](#usage-recommendations)
     - [Cache response selectively](#cache-response-selectively)
     - [Cache null value](#cache-null-value)
@@ -26,15 +35,34 @@
 
 <!-- /MarkdownTOC -->
 
-# Polly.Contrib.CachePolicy
+# Introduction
+This repository contains a set of Polly policies customized for teams services
+
+# Async cache policy
 
 ## Purpose
-The Polly.Contrib.CachePolicy is an implementation of read-through cache, also known as the cache-aside pattern. It provides a resiliency feature of elegantly fallback to return stale cache value when downstream services return errors or throw exceptions. It could be used anywhere an IAsyncPolicy<TResult> Polly policy applies and seamlessly wrapped together with other Polly policies.
+The Microsoft.Teams.ServicesHub.Polly.AsyncCachePolicy is an implementation of read-through cache, also known as the cache-aside pattern. It provides a resiliency feature of elegantly fallback to return stale cache value when downstream services return errors or throw exceptions. 
+
+## Motivation
+AsyncCachePolicy provides you the following capability:
+1. Stale cache: Fallback to cache based on customized exceptions or unexpected response code from downstream services. From past integration experience, stale cache could provide graceful fallback option in
+	* >99% scenarios for tenant level settings.
+	* ~95% scenarios for user level settings.
+
+![](imgs/resiliency-fallbackToCache.png)
+
+2. Various cache serialization strategy
+	* By default, the AsyncCachePolicy support Json-based serialization and protobuf-based serialization with LZ4Picker compression. You could also provide your own serializer if needed.
+	* When compared with Json, Protobuf with LZ4Pickler combined will result in 
+	    - 65% reduction in object size
+		- 40% reduction in deserialization time
+		- 20% reduction in serialization time
+
+![](imgs/Protobuf-based-serialization.png)
 
 ## Roadmap
-1. By default [Newtonsoft.Json serializer](https://www.newtonsoft.com/json) is used to serialize cache targets. In the future, consumers of this package will be able to plugin customized serializers. 
-2. Support caching value types. Currently all onboarding targets need to extend from the base CacheValue abstract class, thus must be reference types. 
-3. Provide an implementation of ILoggingProvider based on ApplicationInsights. 
+1. Support caching value types. Currently all onboarding targets need to extend from the base CacheValue abstract class, thus must be reference types. 
+2. Provide an implementation of ILoggingProvider based on ApplicationInsights. 
 
 ## Operation
 * This is a non-reactive policy with some reactive features (fallback option to return stale cache value). There are in total six conditions which could happen:
@@ -51,7 +79,7 @@ The Polly.Contrib.CachePolicy is an implementation of read-through cache, also k
 
 ## Syntax
 ### Onboard cache target
-1. Suppose that there is class TargetToCache needed to be onboarded to AsyncCache policy
+* Suppose that there is class TargetToCache needed to be onboarded to AsyncCache policy
 
 ```
 class TargetClassToOnboard
@@ -60,12 +88,31 @@ class TargetClassToOnboard
 }
 ```
 
-2. To onboard it to AsyncCache policy, it needs to inherit the **CacheValue** abstract class
+#### Using Newtonsoft based serialization
+* To onboard it to AsyncCache policy, it needs to inherit the **CacheValue** abstract class
 
 ```
 class TargetClassToOnboard : CacheValue
 {
   public string Property { get; set; }
+}
+```
+
+#### Using Protobuf-net and LZ4.Pickler based serialization
+* To onboard it to AsyncCache policy, it needs to inherit the **CacheValue** abstract class
+
+```
+[ProtoContract]
+class TargetClassToOnboard : CacheValue
+{
+  [ProtoMember(1)]
+  public string Property { get; set; }
+
+  [ProtoMember(2)]
+  public override DateTimeOffset? GraceTimeStamp { get; set; }
+
+  [ProtoMember(3)]
+  public override bool IsNull { get; set; }
 }
 ```
 
@@ -82,6 +129,7 @@ class TargetClassToOnboard : CacheValue
 ![](imgs/BuilderStepPatternClassHierarchy.png)
 
 #### Use builder
+##### PlaintextCacheProvider
 
 1. Build it from scratch approach. 
 
@@ -95,13 +143,18 @@ public void ConfigureServices(IServiceCollection services)
     // Set up
     services.Configure<FixedAgingStrategyOptions<TResult>>(typeof(TResult).Name, configuration.GetSection(configurationName));
     services.AddSingleton(typeof(IAgingStrategy<TResult>), typeof(FixedAgingStrategy<TResult>));
+    services.AddSingleton<ILoggingProvider>(serviceProvider => PolicyBuilderUtilities.CreateLoggingProvider(configuration, serviceProvider));
+    services.AddSingleton<IPlainTextSerializer, NewtonsoftJsonSerializer>();
+    services.AddSingleton<IPlaintextCompressor, NoOpPlaintextCompressor>();
+
     var serviceProvider = services.BuildServiceProvider();
-    var loggingProvier = new LoggingProvider<TargetClassToOnboard>(
+    var loggingProvier = new LoggingProvider(
                                        serviceProvider.GetService<IOperationalMetricLogger>(),
-                                       serviceProvider.GetService<ILogger<LoggingProvider<TargetClassToOnboard>>>());
-    var cacheProvider = new CacheProvider<TargetClassToOnboard>(
+                                       serviceProvider.GetService<ILogger<LoggingProvider>>());
+    var cacheProvider = new PlaintextCacheProvider<TargetClassToOnboard>(
                                        serviceProvider.GetService<IDistributedCache>(),
-                                       loggingProvier);
+                                       serviceProvider.GetService<IPlainTextSerializer>(),
+                                       serviceProvider.GetService<ILoggingProvider>());
     var agingStrategy = serviceProvider.GetService<IAgingStrategy<TargetClassToOnboard>>();
 
     // Build it from scratch
@@ -130,17 +183,93 @@ public void ConfigureServices(IServiceCollection services)
     services.AddSingleton(typeof(IAgingStrategy<TResult>), typeof(FixedAgingStrategy<TResult>));
     services.Configure<FixedAgingStrategyOptions<TargetClassToOnboard>>(configuration.GetSection(PolicyBuilderUtilities.GetConfigKeyForFixedAgingStrategyOptions<TargetClassToOnboard>()));
     services.AddSingleton<IAgingStrategy<TargetClassToOnboard>, FixedAgingStrategy<TargetClassToOnboard>>();
+    services.AddSingleton<ILoggingProvider>(serviceProvider => PolicyBuilderUtilities.CreateLoggingProvider(configuration, serviceProvider));
+    services.AddSingleton<IPlainTextSerializer, NewtonsoftJsonSerializer>();
+    services.AddSingleton<IPlaintextCompressor, NoOpPlaintextCompressor>();
 
     // Build it with syntactic sugar
-    var serviceProvider = services.BuildServiceProvider();
-    var asyncCachePolicy = PolicyBuilderUtilities.CreateAsyncCachePolicyBuilder<TResult>(configuration, serviceProvider)
-            .FallbackToCacheWhenThrows<ServiceException>(
+    var cacheProvider = PolicyBuilderUtilities.CreateDefaultPlainTextCacheProvider<TResult>(serviceProvider);
+    var asyncCachePolicy = PolicyBuilderUtilities.CreateAsyncCachePolicyBuilder<TResult>(configuration, serviceProvider, cacheProvider)
+                .FallbackToCacheWhenThrows<ServiceException>(
                     exception => exception.HttpResponseMessage.StatusCode >= HttpStatusCode.InternalServerError)
-            .Build();
+                .OrFallbackToCacheWhenThrows<ServiceException>(
+                    exception => (int)exception.HttpResponseMessage.StatusCode == 429)
+                .Build();
     ...
 }
 
 ```
+
+##### BinaryCacheProvider
+1. Build it from scratch approach. 
+
+```
+// Changes within Startup.cs ConfigureServices() function
+
+public void ConfigureServices(IServiceCollection services)
+{
+    ...
+
+    // Set up
+    services.Configure<FixedAgingStrategyOptions<TResult>>(typeof(TResult).Name, configuration.GetSection(configurationName));
+    services.AddSingleton(typeof(IAgingStrategy<TResult>), typeof(FixedAgingStrategy<TResult>));
+    services.AddSingleton<ILoggingProvider>(serviceProvider => PolicyBuilderUtilities.CreateLoggingProvider(configuration, serviceProvider));
+    services.AddSingleton<IPlainTextSerializer, NewtonsoftJsonSerializer>();
+    services.AddSingleton<IPlaintextCompressor, NoOpPlaintextCompressor>();
+
+    var serviceProvider = services.BuildServiceProvider();
+    var loggingProvier = new LoggingProvider<TargetClassToOnboard>(
+                                       serviceProvider.GetService<IOperationalMetricLogger>(),
+                                       serviceProvider.GetService<ILogger<LoggingProvider>>());
+    var cacheProvider = new BinaryCacheProvider<TResult>(
+                                        serviceProvider.GetService<IDistributedCache>(),
+                                        serviceProvider.GetService<IBinarySerializer>(),
+                                        loggingProvider);
+    var agingStrategy = serviceProvider.GetService<IAgingStrategy<TargetClassToOnboard>>();
+
+    // Build it from scratch
+    var asyncCachePolicy = AsyncCachePolicy<TargetClassToOnboard> 
+             .CreateBuilder( // Create the builder
+                true, // An overall policy enable/disable flag
+                agingStrategy, // Cache aging strategy which controls when cache will become stale and expired.
+                cacheProvider, // An instance of an implementation of ICacheProvider interface
+                loggingProvider) // An instance of an implementation of ILoggingProvider interface
+             .FallbackToCacheWhenThrows<TimeoutException>()
+             .OrFallbackToCacheWhenReturns(result => result.Property.contains("error"))
+             .Build();
+    ...
+```
+
+2. A syntax sugar is provided within the package for ASP.NET CORE as an extension method for IServicesCollection. 
+
+```
+// Changes within Startup.cs ConfigureServices() function
+
+public void ConfigureServices(IServiceCollection services)
+{
+    ...
+    // Set up
+    services.Configure<FixedAgingStrategyOptions<TResult>>(typeof(TResult).Name, configuration.GetSection(configurationName));
+    services.AddSingleton(typeof(IAgingStrategy<TResult>), typeof(FixedAgingStrategy<TResult>));
+    services.Configure<FixedAgingStrategyOptions<TargetClassToOnboard>>(configuration.GetSection(PolicyBuilderUtilities.GetConfigKeyForFixedAgingStrategyOptions<TargetClassToOnboard>()));
+    services.AddSingleton<IAgingStrategy<TargetClassToOnboard>, FixedAgingStrategy<TargetClassToOnboard>>();
+    services.AddSingleton<ILoggingProvider>(serviceProvider => PolicyBuilderUtilities.CreateLoggingProvider(configuration, serviceProvider));
+    services.AddSingleton<IPlainTextSerializer, NewtonsoftJsonSerializer>();
+    services.AddSingleton<IPlaintextCompressor, NoOpPlaintextCompressor>();
+
+    // Build it with syntactic sugar
+    var cacheProvider = PolicyBuilderUtilities.CreateDefaultBinaryCacheProvider<TResult>(serviceProvider);
+    var asyncCachePolicy = PolicyBuilderUtilities.CreateAsyncCachePolicyBuilder<TResult>(configuration, serviceProvider, cacheProvider, loggingProvider)
+                .FallbackToCacheWhenThrows<ServiceException>(
+                    exception => exception.HttpResponseMessage.StatusCode >= HttpStatusCode.InternalServerError)
+                .OrFallbackToCacheWhenThrows<ServiceException>(
+                    exception => (int)exception.HttpResponseMessage.StatusCode == 429)
+                .Build();
+    ...
+}
+
+```
+
 
 ### Configure policy
 
@@ -236,19 +365,32 @@ public abstract class CacheValue
     {
         Task<TResult> GetAsync<TResult>(string key, Context context)
             where TResult : CacheValue;
-        Task SetAsync<TResult>(string key, TResult value, TimeSpan expirationRelativeToNow,  TimeSpan graceRelativeToNow, Context context)
+        Task SetAsync<TResult>(string key, TResult value, TimeSpan expirationRelativeToNow, TimeSpan graceRelativeToNow, Context context)
             where TResult : CacheValue;
     }
 ```
 
 * When to override: The default cache provider does not log the cache metrics you cared about or the cache pattern does not match your case. 
-* Default CacheProvider (if none specified)
+* Cache operations:
 1. Cache set: 
     1. The default cache set operation will refresh the cache in a fire and forget fashion.
     2. When using the fallback to stale cache option and retrieving from backend succeeds, the default set operation will always set the cache without comparing the equality of stale cache and retrieved backend values.
     3. All cache set exception will be captured and logged.
 2. Cache get:
     1. All cache get exception will be captured and logged. 
+
+* There are two implementation of CacheProvider (PlaintextCacheProvider and BinaryCacheProvider) shipped with the package. Their cache operations are completely same. The only difference is that although both of them rely on [IDistributedCache](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.caching.distributed.idistributedcache?view=dotnet-plat-ext-3.1), PlaintextCacheProvider is relying on plaintext interface and BinaryCacheProvider is relying on binary interface. 
+
+```
+// PlaintextCacheProvider
+public static Task<string> GetStringAsync(this IDistributedCache cache, string key, CancellationToken token = default);
+public static Task SetStringAsync(this IDistributedCache cache, string key, string value, DistributedCacheEntryOptions options, CancellationToken token = default)
+
+// BinaryCacheProvider
+public static Task<byte[]> GetAsync(string key, CancellationToken token = default);
+public static Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default);
+
+```
 
 ### ILoggingProvider
 * Purpose: Providing a generic logging layer for all AsyncCache policy operations. A default LoggingProvider is provided within AsyncCachePolicy. 
@@ -262,10 +404,19 @@ public abstract class CacheValue
         "MetricNameCacheGetAsyncLatency": "Metric\DistributedCache\GetAsync\Latency",
         "MetricNameCacheSetAsyncLatency": "Metric\DistributedCache\SetAsync\Latency",
         "MetricNameBackendGetAsyncLatency": "Metric\Backend\GetAsync\Latency",
+        "MetricNameCacheSerializeLatency": "Metric\DistributedCache\Serialize\Latency",
+        "MetricNameCacheDeserializeLatency": "Metric\DistributedCache\Deserialize\Latency",
+        "MetricNameCacheCompressLatency": "Metric\DistributedCache\Compress\Latency",
+        "MetricNameCacheDecompressLatency": Metric\DistributedCache\Decompress\Latency",
+        "MetricNameCacheSerializedSize": "Metric\DistributedCache\SerializedSize",
+        "MetricNameCacheCompressedSerializedSize": "Metric\DistributedCache\CompressedSerializedSize",
+
         "DimensionNameOperationName": "OperationName",
         "DimensionNameIsSuccess": "IsSuccess",
         "DimensionNameIsCacheHit": "IsCacheHit",
         "DimensionNameIsCacheFallback": "IsCacheFallback"
+        "DimensionNameSerializationStrategy": "SerializationStrategy",
+        "DimensionNameCompressionStrategy": "CompressionStrategy",
     }
 }
 ```
@@ -273,6 +424,17 @@ public abstract class CacheValue
 ### IAgingStrategy
 * Purpose: To provide a cache aging strategy controlling whne cache will become stale and expired. 
 * When to override: A default FixedAgingStrategy is provided if none if provided. This default implementation will take a relative fixed duration for cache item to become stale and expired. The idea is borrowed from Polly Cache policy's TtlStrategy https://github.com/App-vNext/Polly/wiki/Cache. Please refer to the "Cache response selectively" section within this README for an example. 
+
+### Serializers
+#### IPlaintextSerializer and IPlaintextCompressor
+* Purpose: Serialize an object into plaintext format to store inside cache storage.
+* When to overide: There is a built-in Newtonsoft.Json and no compression based serialization shipped as the default implementation. If more customized serializer is needed, then please override it.
+
+
+#### IBinarySerializer and IBinaryCompressor
+* Purpose: Serialize an object into binary format to store inside cache storage.
+* When to overide: There is a built-in Protobuf-net and LZ4.Pickler compression based serialization shipped as the default implementation. If more customized serializer is needed, then please override it.
+
 
 ## Usage recommendations
 
@@ -319,7 +481,6 @@ public abstract class CacheValue
                 .Build();        
     }
 ```
-
 
 ### Cache null value
 * If null value needs to be cached, then the IsNull preoperty needs to be set to true in the onboarded class.
