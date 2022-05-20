@@ -26,7 +26,7 @@ namespace Polly.Contrib.CachePolicy
                                                             bool isPolicyEnabled,
                                                             IAgingStrategy<TResult> agingStrategy,
                                                             ICacheProvider cacheProvider,
-                                                            ILoggingProvider<TResult> loggingProvider)
+                                                            ILoggingProvider loggingProvider)
         {
             agingStrategy.ThrowIfNull(nameof(agingStrategy));
             cacheProvider.ThrowIfNull(nameof(cacheProvider));

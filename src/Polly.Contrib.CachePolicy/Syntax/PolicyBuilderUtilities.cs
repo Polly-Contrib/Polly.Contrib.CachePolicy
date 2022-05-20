@@ -94,11 +94,11 @@ namespace Polly.Contrib.CachePolicy.Syntax
             var loggingProviderOptions = CreateLoggingProivderOptions(configuration, configKeyLoggingProviderOptions);
 
             // build policy dependencies
-            var loggingProvider = new LoggingProvider<TResult>(
+            var loggingProvider = new LoggingProvider(
                                                    loggingProviderOptions,
                                                    serviceProvider.GetService<IOperationalMetricLogger>(),
-                                                   serviceProvider.GetService<ILogger<LoggingProvider<TResult>>>());
-            var cacheProvider = new CacheProvider<TResult>(
+                                                   serviceProvider.GetService<ILogger<LoggingProvider>>());
+            var cacheProvider = new CacheProvider(
                                                   serviceProvider.GetService<IDistributedCache>(),
                                                   loggingProvider);
             var agingStrategy = serviceProvider.GetService<IAgingStrategy<TResult>>();

@@ -30,7 +30,7 @@ namespace Polly.Contrib.CachePolicy.Builder
         /// <summary>
         /// Provides the contract to logging <see cref="AsyncCachePolicy{TResult}"/> operations.
         /// </summary>
-        private readonly ILoggingProvider<TResult> loggingProvider;
+        private readonly ILoggingProvider loggingProvider;
 
         /// <summary>
         /// Cache aging strategy which controls when cache will become stale and expired.
@@ -53,7 +53,7 @@ namespace Polly.Contrib.CachePolicy.Builder
             bool isPolicyEnabled,
             IAgingStrategy<TResult> agingStrategy,
             ICacheProvider cacheProvider,
-            ILoggingProvider<TResult> loggingProvider)
+            ILoggingProvider loggingProvider)
         {
             cacheProvider.ThrowIfNull(nameof(cacheProvider));
             loggingProvider.ThrowIfNull(nameof(loggingProvider));

@@ -36,7 +36,7 @@ namespace Polly.Contrib.CachePolicy
         /// <summary>
         /// Defines the contract to logging <see cref="AsyncCachePolicy{TResult}"/> metrics and traces
         /// </summary>
-        private ILoggingProvider<TResult> loggingProvider;
+        private ILoggingProvider loggingProvider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AsyncCachePolicy{TResult}"/> class.
@@ -51,7 +51,7 @@ namespace Polly.Contrib.CachePolicy
             PolicyBuilder<TResult> policyBuilder,
             IAgingStrategy<TResult> agingStrategy,
             ICacheProvider cacheProvider,
-            ILoggingProvider<TResult> loggingProvider)
+            ILoggingProvider loggingProvider)
             : base(policyBuilder)
         {
             agingStrategy.ThrowIfNull(nameof(agingStrategy));

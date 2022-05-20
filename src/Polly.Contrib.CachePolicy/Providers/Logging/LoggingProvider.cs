@@ -13,8 +13,7 @@ namespace Polly.Contrib.CachePolicy.Providers.Logging
     /// An implementation of <see cref="ILoggingProvider{TResult}"/>.
     /// </summary>
     /// <typeparam name="TResult">The type of return values this logging provider will handle.</typeparam>
-    public class LoggingProvider<TResult> : ILoggingProvider<TResult>
-        where TResult : CacheValue
+    public class LoggingProvider : ILoggingProvider
     {
         /// <summary>
         /// Configuration options for <see cref="LoggingProvider{TResult}"/>.
@@ -29,7 +28,7 @@ namespace Polly.Contrib.CachePolicy.Providers.Logging
         /// <summary>
         /// Logger meant for message logging.
         /// </summary>
-        private ILogger<LoggingProvider<TResult>> logger;
+        private ILogger<LoggingProvider> logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoggingProvider{TResult}"/> class.
@@ -40,7 +39,7 @@ namespace Polly.Contrib.CachePolicy.Providers.Logging
         public LoggingProvider(
                 LoggingProviderOptions loggingProviderOptions,
                 IOperationalMetricLogger metricLogger,
-                ILogger<LoggingProvider<TResult>> logger)
+                ILogger<LoggingProvider> logger)
         {
             loggingProviderOptions.ThrowIfNull(nameof(loggingProviderOptions));
             metricLogger.ThrowIfNull(nameof(metricLogger));
@@ -90,7 +89,8 @@ namespace Polly.Contrib.CachePolicy.Providers.Logging
         }
 
         /// <inheritdoc/>
-        public void OnBackendGet(string key, bool isSuccess, bool isFallbackToCache, long latencyInMilliSeconds, DelegateResult<TResult> delegateFailureOutcome, Context context)
+        public void OnBackendGet<TResult>(string key, bool isSuccess, bool isFallbackToCache, long latencyInMilliSeconds, DelegateResult<TResult> delegateFailureOutcome, Context context)
+                where TResult : CacheValue
         {
             this.metricLogger.LogMetric(
                 this.loggingProviderOptions.MetricNameBackendGetAsyncLatency,

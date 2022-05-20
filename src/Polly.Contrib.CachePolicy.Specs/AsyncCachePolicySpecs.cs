@@ -55,7 +55,7 @@ namespace Polly.Contrib.CachePolicy.Tests
 
         private readonly Mock<ICacheProvider> cacheProvider = new Mock<ICacheProvider>();
 
-        private readonly Mock<ILoggingProvider<ClassToCache>> loggingProvider = new Mock<ILoggingProvider<ClassToCache>>();
+        private readonly Mock<ILoggingProvider> loggingProvider = new Mock<ILoggingProvider>();
 
         private readonly Mock<IAgingStrategy<ClassToCache>> agingStrategy = new Mock<IAgingStrategy<ClassToCache>>();
 
