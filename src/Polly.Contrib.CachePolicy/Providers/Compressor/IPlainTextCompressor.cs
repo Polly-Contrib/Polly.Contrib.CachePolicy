@@ -9,14 +9,16 @@
         /// Compress plaintext.
         /// </summary>
         /// <param name="input">Plaintext to be compressed.</param>
+        /// <param name="context">The execution context.</param>
         /// <returns>Compressed plaintext.</returns>
-        string Compress(string input);
+        string Compress(string input, Context context);
 
         /// <summary>
         /// Decompress plaintext.
         /// </summary>
         /// <param name="input">Compressed plaintext.</param>
+        /// <param name="context">The execution context.</param>
         /// <returns>Decompressed plaintext.</returns>
-        string Decompress(string input);
+        string Decompress(string input, Context context);
     }
 }

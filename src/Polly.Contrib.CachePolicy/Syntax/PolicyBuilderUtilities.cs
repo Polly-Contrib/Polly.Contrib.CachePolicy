@@ -45,6 +45,36 @@ namespace Polly.Contrib.CachePolicy.Syntax
         private const string DefaultMetricNameBackendGetAsyncLatency = @"Metric\Backend\GetAsync\Latency";
 
         /// <summary>
+        /// Default metric name for cache serialize operation latency.
+        /// </summary>
+        private const string DefaultMetricNameCacheSerializeLatency = @"Metric\DistributedCache\Serialize\Latency";
+
+        /// <summary>
+        /// Default metric name for cache deserialize operation latency.
+        /// </summary>
+        private const string DefaultMetricNameCacheDeserializeLatency = @"Metric\DistributedCache\Deserialize\Latency";
+
+        /// <summary>
+        /// Default metric name for cache compress operation latency.
+        /// </summary>
+        private const string DefaultMetricNameCacheCompressLatency = @"Metric\DistributedCache\Compress\Latency";
+
+        /// <summary>
+        /// Default metric name for cache decompress operation latency.
+        /// </summary>
+        private const string DefaultMetricNameCacheDecompressLatency = @"Metric\DistributedCache\Decompress\Latency";
+
+        /// <summary>
+        /// Default metric name for serialized size of a cache object.
+        /// </summary>
+        private const string DefaultMetricNameCacheSerializedSize = @"Metric\DistributedCache\SerializedSize";
+
+        /// <summary>
+        /// Default metric name for compressed serialized size of a cache object.
+        /// </summary>
+        private const string DefaultMetricNameCacheCompressedSerializedSize = @"Metric\DistributedCache\CompressedSerializedSize";
+
+        /// <summary>
         /// Default dimension name for the cache operation scenario name.
         /// </summary>
         private const string DefaultDimensionNameOperationName = "OperationName";
@@ -68,6 +98,16 @@ namespace Polly.Contrib.CachePolicy.Syntax
         /// Default dimension name for falling back to cache operations.
         /// </summary>
         private const string DefaultDimensionNameIsCacheFallback = "IsCacheFallback";
+
+        /// <summary>
+        /// Default dimension name for strategy used to serialize a cache object.
+        /// </summary>
+        private const string DefaultDimensionNameSerializationStrategy = "SerializationStrategy";
+
+        /// <summary>
+        /// Default dimension name for strategy used to compress serialized cache objects.
+        /// </summary>
+        private const string DefaultDimensionNameCompressionStrategy = "CompressionStrategy";
 
         /// <summary>
         /// Create a <see cref="AsyncCachePolicyBuilder{TResult}"/> with default configs.
@@ -223,9 +263,18 @@ namespace Polly.Contrib.CachePolicy.Syntax
                 DimensionNameIsCacheFresh = overrideOptions?.DimensionNameIsCacheFresh ?? DefaultDimensionNameIsCacheFresh,
                 DimensionNameIsCacheFallback = overrideOptions?.DimensionNameIsCacheFallback ?? DefaultDimensionNameIsCacheFallback,
                 DimensionNameOperationName = overrideOptions?.DimensionNameOperationName ?? DefaultDimensionNameOperationName,
+                DimensionNameSerializationStrategy = overrideOptions?.DimensionNameSerializationStrategy ?? DefaultDimensionNameSerializationStrategy,
+                DimensionNameCompressionStrategy = overrideOptions?.DimensionNameCompressionStrategy ?? DefaultDimensionNameCompressionStrategy,
+
                 MetricNameCacheGetAsyncLatency = overrideOptions?.MetricNameCacheGetAsyncLatency ?? DefaultMetricNameCacheGetAsyncLatency,
                 MetricNameCacheSetAsyncLatency = overrideOptions?.MetricNameCacheSetAsyncLatency ?? DefaultMetricNameCacheSetAsyncLatency,
                 MetricNameBackendGetAsyncLatency = overrideOptions?.MetricNameBackendGetAsyncLatency ?? DefaultMetricNameBackendGetAsyncLatency,
+                MetricNameCacheSerializeLatency = overrideOptions?.MetricNameCacheSerializeLatency ?? DefaultMetricNameCacheSerializeLatency,
+                MetricNameCacheDeserializeLatency = overrideOptions?.MetricNameCacheDeserializeLatency ?? DefaultMetricNameCacheDeserializeLatency,
+                MetricNameCacheCompressLatency = overrideOptions?.MetricNameCacheCompressLatency ?? DefaultMetricNameCacheCompressLatency,
+                MetricNameCacheDecompressLatency = overrideOptions?.MetricNameCacheDecompressLatency ?? DefaultMetricNameCacheDecompressLatency,
+                MetricNameCacheSerializedSize = overrideOptions?.MetricNameCacheSerializedSize ?? DefaultMetricNameCacheSerializedSize,
+                MetricNameCacheCompressedSerializedSize = overrideOptions?.MetricNameCacheCompressedSerializedSize ?? DefaultMetricNameCacheCompressedSerializedSize,
             };
 
             return result;

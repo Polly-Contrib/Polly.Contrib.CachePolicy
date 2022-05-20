@@ -111,5 +111,75 @@ namespace Polly.Contrib.CachePolicy.Providers.Logging
                 this.logger.LogError($"Error results returned during fetching backend operation. OperationName: {context.GetOperationName()}. Error results: {delegateFailureOutcome.Result}.");
             }
         }
+
+        /// <inheritdoc/>
+        public void OnCacheSerialize(string key, string serializationStrategy, long latencyInMilliSeconds, long serializedSize, Context context)
+        {
+            this.metricLogger.LogMetric(
+                this.loggingProviderOptions.MetricNameCacheSerializeLatency,
+                new Dictionary<string, string>
+                {
+                    { this.loggingProviderOptions.DimensionNameOperationName, context.GetOperationName() },
+                    { this.loggingProviderOptions.DimensionNameSerializationStrategy, serializationStrategy },
+                },
+                latencyInMilliSeconds);
+
+            this.metricLogger.LogMetric(
+                this.loggingProviderOptions.MetricNameCacheSerializedSize,
+                new Dictionary<string, string>
+                {
+                    { this.loggingProviderOptions.DimensionNameOperationName, context.GetOperationName() },
+                    { this.loggingProviderOptions.DimensionNameSerializationStrategy, serializationStrategy },
+                },
+                serializedSize);
+        }
+
+        /// <inheritdoc/>
+        public void OnCacheDeserialize(string key, string serializationStrategy, long latencyInMilliSeconds, Context context)
+        {
+            this.metricLogger.LogMetric(
+                this.loggingProviderOptions.MetricNameCacheDeserializeLatency,
+                new Dictionary<string, string>
+                {
+                    { this.loggingProviderOptions.DimensionNameOperationName, context.GetOperationName() },
+                    { this.loggingProviderOptions.DimensionNameSerializationStrategy, serializationStrategy },
+                },
+                latencyInMilliSeconds);
+        }
+
+        /// <inheritdoc/>
+        public void OnCacheCompress(string key, string compressionStrategy, long latencyInMilliSeconds, long compressedSize, Context context)
+        {
+            this.metricLogger.LogMetric(
+                this.loggingProviderOptions.MetricNameCacheCompressLatency,
+                new Dictionary<string, string>
+                {
+                    { this.loggingProviderOptions.DimensionNameOperationName, context.GetOperationName() },
+                    { this.loggingProviderOptions.DimensionNameCompressionStrategy, compressionStrategy },
+                },
+                latencyInMilliSeconds);
+
+            this.metricLogger.LogMetric(
+                this.loggingProviderOptions.MetricNameCacheCompressedSerializedSize,
+                new Dictionary<string, string>
+                {
+                    { this.loggingProviderOptions.DimensionNameOperationName, context.GetOperationName() },
+                    { this.loggingProviderOptions.DimensionNameCompressionStrategy, compressionStrategy },
+                },
+                compressedSize);
+        }
+
+        /// <inheritdoc/>
+        public void OnCacheDecompress(string key, string compressionStrategy, long latencyInMilliSeconds, Context context)
+        {
+            this.metricLogger.LogMetric(
+                this.loggingProviderOptions.MetricNameCacheDecompressLatency,
+                new Dictionary<string, string>
+                {
+                    { this.loggingProviderOptions.DimensionNameOperationName, context.GetOperationName() },
+                    { this.loggingProviderOptions.DimensionNameCompressionStrategy, compressionStrategy },
+                },
+                latencyInMilliSeconds);
+        }
     }
 }

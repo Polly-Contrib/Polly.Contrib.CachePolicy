@@ -21,6 +21,36 @@
         public string MetricNameBackendGetAsyncLatency { get; set; }
 
         /// <summary>
+        /// Metric name for cache serialize operation latency.
+        /// </summary>
+        public string MetricNameCacheSerializeLatency { get; set; }
+
+        /// <summary>
+        /// Metric name for cache deserialize operation latency.
+        /// </summary>
+        public string MetricNameCacheDeserializeLatency { get; set; }
+
+        /// <summary>
+        /// Metric name for cache compress operation latency.
+        /// </summary>
+        public string MetricNameCacheCompressLatency { get; set; }
+
+        /// <summary>
+        /// Metric name for cache decompress operation latency.
+        /// </summary>
+        public string MetricNameCacheDecompressLatency { get; set; }
+
+        /// <summary>
+        /// Metric name for serialized size of a cache object.
+        /// </summary>
+        public string MetricNameCacheSerializedSize { get; set; }
+
+        /// <summary>
+        /// Metric name for compressed serialized size of a cache object.
+        /// </summary>
+        public string MetricNameCacheCompressedSerializedSize { get; set; }
+
+        /// <summary>
         /// Dimension name for the cache scenario.
         /// </summary>
         public string DimensionNameOperationName { get; set; }
@@ -44,5 +74,15 @@
         /// Dimension name for falling back to cache operations.
         /// </summary>
         public string DimensionNameIsCacheFallback { get; set; }
+
+        /// <summary>
+        /// Dimension name for strategy used to serialize a cache object.
+        /// </summary>
+        public string DimensionNameSerializationStrategy { get; set; }
+
+        /// <summary>
+        /// Dimension name for strategy used to compress serialized cache objects.
+        /// </summary>
+        public string DimensionNameCompressionStrategy { get; set; }
     }
 }

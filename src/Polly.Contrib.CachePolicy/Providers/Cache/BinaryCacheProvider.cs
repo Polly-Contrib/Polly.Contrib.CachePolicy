@@ -70,7 +70,7 @@ namespace Polly.Contrib.CachePolicy.Providers.Cache
                 }
 
                 isCacheHit = true;
-                var result = this.binarySerializer.DeserializeFromBytes<TResult>(value);
+                var result = this.binarySerializer.DeserializeFromBytes<TResult>(value, context);
                 isCacheFresh = result.IsFresh();
                 return result;
             }
@@ -104,7 +104,7 @@ namespace Polly.Contrib.CachePolicy.Providers.Cache
             try
             {
                 value.SetGraceTimeStamp(graceTimeRelativeToNow);
-                await this.distributedCache.SetAsync(key, this.binarySerializer.SerializeToBytes(value), new DistributedCacheEntryOptions()
+                await this.distributedCache.SetAsync(key, this.binarySerializer.SerializeToBytes(value, context), new DistributedCacheEntryOptions()
                 {
                     AbsoluteExpirationRelativeToNow = expirationRelativeToNow,
                 });

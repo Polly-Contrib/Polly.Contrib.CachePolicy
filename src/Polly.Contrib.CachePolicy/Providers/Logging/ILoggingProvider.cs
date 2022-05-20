@@ -43,5 +43,43 @@ namespace Polly.Contrib.CachePolicy.Providers.Logging
         /// <param name="context">The execution context.</param>
         void OnBackendGet<TResult>(string key, bool isSuccess, bool isFallbackToCache, long latencyInMilliSeconds, DelegateResult<TResult> delegateFailureOutcome, Context context)
             where TResult : CacheValue;
+
+        /// <summary>
+        /// Logs the metrics/traces for any single operation to serialize a cache object.
+        /// </summary>
+        /// <param name="key">The key against which the data is stored in the cache.</param>
+        /// <param name="serializationStrategy">The serializatiion strategy used to serialize the cache object, such as Json, Protobuf, etc.</param>
+        /// <param name="latencyInMilliSeconds">The overall latency for a single operation to fetch result from backend services with the option to fall back to cache.</param>
+        /// <param name="serializedSize">The size of the serialized cache object without any compression.</param>
+        /// <param name="context">The execution context.</param>
+        void OnCacheSerialize(string key, string serializationStrategy, long latencyInMilliSeconds, long serializedSize, Context context);
+
+        /// <summary>
+        /// Logs the metrics/traces for any single operation to deserialize a cache object.
+        /// </summary>
+        /// <param name="key">The key against which the data is stored in the cache.</param>
+        /// <param name="serializationStrategy">The serializatiion strategy used to serialize the cache object, such as Json, Protobuf, etc.</param>
+        /// <param name="latencyInMilliSeconds">The overall latency for a single operation to fetch result from backend services with the option to fall back to cache.</param>
+        /// <param name="context">The execution context.</param>
+        void OnCacheDeserialize(string key, string serializationStrategy, long latencyInMilliSeconds, Context context);
+
+        /// <summary>
+        /// Logs the metrics/traces for any single operation to compress a serialized cache object.
+        /// </summary>
+        /// <param name="key">The key against which the data is stored in the cache.</param>
+        /// <param name="compressionStrategy">The compression strategy used to compress the serialized cache objects, such as LZ4, MessagePack, etc.</param>
+        /// <param name="latencyInMilliSeconds">The overall latency for a single operation to fetch result from backend services with the option to fall back to cache.</param>
+        /// <param name="compressedSize">The size of the serialized cache object after compression.</param>
+        /// <param name="context">The execution context.</param>
+        void OnCacheCompress(string key, string compressionStrategy, long latencyInMilliSeconds, long compressedSize, Context context);
+
+        /// <summary>
+        /// Logs the metrics/traces for any single operation to decompress a compressed serialized cache object.
+        /// </summary>
+        /// <param name="key">The key against which the data is stored in the cache.</param>
+        /// <param name="compressionStrategy">The compression strategy used to compress the serialized cache objects, such as LZ4, MessagePack, etc.</param>
+        /// <param name="latencyInMilliSeconds">The overall latency for a single operation to fetch result from backend services with the option to fall back to cache.</param>
+        /// <param name="context">The execution context.</param>
+        void OnCacheDecompress(string key, string compressionStrategy, long latencyInMilliSeconds, Context context);
     }
 }
