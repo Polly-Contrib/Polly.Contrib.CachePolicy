@@ -49,7 +49,7 @@ namespace Polly.Contrib.CachePolicy.Builder
         /// <param name="agingStrategy">Cache aging strategy which controls when cache will become stale and expired.</param>
         /// <param name="cacheProvider">Provides the contract to access cache layer</param>
         /// <param name="loggingProvider">Provides the contract to logging <see cref="AsyncCachePolicy{TResult}"/> operations</param>
-        internal AsyncCachePolicyBuilder(
+        public AsyncCachePolicyBuilder(
             bool isPolicyEnabled,
             IAgingStrategy<TResult> agingStrategy,
             ICacheProvider cacheProvider,
