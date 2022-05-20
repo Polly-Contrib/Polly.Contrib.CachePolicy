@@ -12,7 +12,7 @@ namespace Polly.Contrib.CachePolicy.Models
         /// <summary>
         /// A point in time after which the cache will no longer be considered fresh and will only used for fall back to cache purpose
         /// </summary>
-        [JsonPropertyAttribute]
+        [JsonPropertyAttribute(NullValueHandling = NullValueHandling.Ignore)]
         private DateTimeOffset? graceTimeStamp;
 
         /// <summary>
