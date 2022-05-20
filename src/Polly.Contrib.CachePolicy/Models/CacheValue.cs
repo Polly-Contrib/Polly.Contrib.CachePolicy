@@ -13,7 +13,7 @@ namespace Polly.Contrib.CachePolicy.Models
         /// A point in time after which the cache will no longer be considered fresh and will only used for fall back to cache purpose
         /// </summary>
         [JsonPropertyAttribute(NullValueHandling = NullValueHandling.Ignore)]
-        private DateTimeOffset? graceTimeStamp;
+        public virtual DateTimeOffset? GraceTimeStamp { get; set; }
 
         /// <summary>
         /// Whether the value cached is null.
@@ -27,8 +27,8 @@ namespace Polly.Contrib.CachePolicy.Models
         /// <remarks>For grace cache migration, if grace timestamp does not exist in the cache item, it is still fresh.</remarks>
         public virtual bool IsFresh()
         {
-            return !this.graceTimeStamp.HasValue
-                || this.graceTimeStamp.Value.CompareTo(DateTimeOffset.Now) > 0;
+            return !this.GraceTimeStamp.HasValue
+                || this.GraceTimeStamp.Value.CompareTo(DateTimeOffset.Now) > 0;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Polly.Contrib.CachePolicy.Models
         /// <param name="graceTimeRelativeToNow">Grace duration relative to now after which the cached item will no longer be considered fresh and will only used for fall back to cache purpose</param>
         public virtual void SetGraceTimeStamp(TimeSpan graceTimeRelativeToNow)
         {
-            this.graceTimeStamp = DateTimeOffset.Now.Add(graceTimeRelativeToNow);
+            this.GraceTimeStamp = DateTimeOffset.Now.Add(graceTimeRelativeToNow);
         }
     }
 }

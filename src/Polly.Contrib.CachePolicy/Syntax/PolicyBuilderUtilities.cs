@@ -10,6 +10,7 @@ using Polly.Contrib.CachePolicy.Builder.AgingStrategy;
 using Polly.Contrib.CachePolicy.Models;
 using Polly.Contrib.CachePolicy.Providers.Cache;
 using Polly.Contrib.CachePolicy.Providers.Logging;
+using Polly.Contrib.CachePolicy.Providers.Serializer;
 
 namespace Polly.Contrib.CachePolicy.Syntax
 {
@@ -98,8 +99,9 @@ namespace Polly.Contrib.CachePolicy.Syntax
                                                    loggingProviderOptions,
                                                    serviceProvider.GetService<IOperationalMetricLogger>(),
                                                    serviceProvider.GetService<ILogger<LoggingProvider>>());
-            var cacheProvider = new CacheProvider(
+            var cacheProvider = new PlainTextCacheProvider(
                                                   serviceProvider.GetService<IDistributedCache>(),
+                                                  serviceProvider.GetService<IPlainTextSerializer>(),
                                                   loggingProvider);
             var agingStrategy = serviceProvider.GetService<IAgingStrategy<TResult>>();
 
@@ -108,6 +110,101 @@ namespace Polly.Contrib.CachePolicy.Syntax
                                                 agingStrategy,
                                                 cacheProvider,
                                                 loggingProvider);
+        }
+
+
+        /// <summary>
+        /// Create a <see cref="AsyncCachePolicyBuilder{TResult}"/> with overloaded <see cref="ICacheProvider"/> and <see cref="ILoggingProvider"/> and other default configs.
+        /// </summary>
+        /// <typeparam name="TResult">The type of return values this policy will handle.</typeparam>
+        /// <param name="configuration">Represents a set of key/value application configuration properties</param>]
+        /// <param name="serviceProvider">Defines a mechanism for retrieving a service object.</param>
+        /// <param name="cacheProvider">An instance of <see cref="ICacheProvider"/> to access cache layer</param>
+        /// <param name="loggingProvider">An instance of <see cref="ILoggingProvider"/>.</param>
+        /// <param name="configKeyPolicyEnabled">Configuration key for whether the policy is enabled. If absent, it will use "AsyncCachePolicy:{0}:Enabled".</param>
+        /// <returns>A collection of service descriptors</returns>
+        public static IFallbackConditionStep<TResult> CreateAsyncCachePolicyBuilder<TResult>(
+                                                IConfiguration configuration,
+                                                IServiceProvider serviceProvider,
+                                                ICacheProvider cacheProvider,
+                                                ILoggingProvider loggingProvider,
+                                                string configKeyPolicyEnabled = null)
+                                                where TResult : CacheValue
+        {
+            // Configuration key for policy
+            configKeyPolicyEnabled = configKeyPolicyEnabled ?? string.Format(CultureInfo.InvariantCulture, ConfigKeyFormatPolicyEnabled, typeof(TResult).Name);
+            var policyEnabled = configuration.GetSection(configKeyPolicyEnabled)
+                                             .Get<bool>();
+            var agingStrategy = serviceProvider.GetService<IAgingStrategy<TResult>>();
+
+            return new AsyncCachePolicyBuilder<TResult>(
+                                                policyEnabled,
+                                                agingStrategy,
+                                                cacheProvider,
+                                                loggingProvider);
+        }
+
+        /// <summary>
+        /// Create an instance <see cref="PlainTextCacheProvider"/>.
+        /// </summary>
+        /// <typeparam name="TResult">The type of return values this policy will handle.</typeparam>
+        /// <param name="serviceProvider">Defines a mechanism for retrieving a service object.</param>
+        /// <param name="loggingProvider">Logging provider for logging <see cref="AsyncCachePolicy{TResult}"/> operations.</param>
+        /// <returns>An instance of <see cref="ICacheProvider"/> to access cache layer.</returns>
+        public static ICacheProvider CreateDefaultPlainTextCacheProvider<TResult>(
+                                     IServiceProvider serviceProvider,
+                                     ILoggingProvider loggingProvider)
+                                                            where TResult : CacheValue
+        {
+            var cacheProvider = new PlainTextCacheProvider(
+                                                  serviceProvider.GetService<IDistributedCache>(),
+                                                  serviceProvider.GetService<IPlainTextSerializer>(),
+                                                  loggingProvider);
+            return cacheProvider;
+        }
+
+        /// <summary>
+        /// Create an instance <see cref="BinaryCacheProvider"/>.
+        /// </summary>
+        /// <typeparam name="TResult">The type of return values this policy will handle.</typeparam>
+        /// <param name="serviceProvider">Defines a mechanism for retrieving a service object.</param>
+        /// <param name="loggingProvider">Logging provider for logging <see cref="AsyncCachePolicy{TResult}"/> operations.</param>
+        /// <returns>An instance of <see cref="ICacheProvider"/> to access cache layer.</returns>
+        public static ICacheProvider CreateDefaultBinaryCacheProvider<TResult>(
+                                        IServiceProvider serviceProvider,
+                                        ILoggingProvider loggingProvider)
+                                                    where TResult : CacheValue
+        {
+            var cacheProvider = new BinaryCacheProvider(
+                                                  serviceProvider.GetService<IDistributedCache>(),
+                                                  serviceProvider.GetService<IBinarySerializer>(),
+                                                  loggingProvider);
+            return cacheProvider;
+        }
+
+        /// <summary>
+        /// Create an instance of <see cref="ILoggerProvider"/>.
+        /// </summary>
+        /// <typeparam name="TResult">The type of return values this policy will handle.</typeparam>
+        /// <param name="configuration">Represents a set of key/value application configuration properties</param>]
+        /// <param name="serviceProvider">Defines a mechanism for retrieving a service object.</param>
+        /// <param name="configKeyLoggingProviderOptions">Configuration key for <see cref="LoggingProviderOptions"/>. If absent, it will use "AsyncCachePolicy:LoggingProvider".</param>
+        /// <returns>Logging provider for logging <see cref="AsyncCachePolicy{TResult}"/> operations.</returns>
+        public static ILoggingProvider CreateLoggingProvider<TResult>(
+                                                    IConfiguration configuration,
+                                                    IServiceProvider serviceProvider,
+                                                    string configKeyLoggingProviderOptions = null)
+                                                    where TResult : CacheValue
+        {
+            configKeyLoggingProviderOptions = configKeyLoggingProviderOptions ?? ConfigKeyLoggingProvider;
+
+            var loggingProviderOptions = CreateLoggingProivderOptions(configuration, configKeyLoggingProviderOptions);
+
+            var loggingProvider = new LoggingProvider(
+                                                   loggingProviderOptions,
+                                                   serviceProvider.GetService<IOperationalMetricLogger>(),
+                                                   serviceProvider.GetService<ILogger<LoggingProvider>>());
+            return loggingProvider;
         }
 
         /// <summary>

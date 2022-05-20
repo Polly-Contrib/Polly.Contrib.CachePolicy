@@ -13,6 +13,7 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
     <PackageReference Include="protobuf-net" Version="3.1.4" />
+    <PackageReference Include="K4os.Compression.LZ4" Version="1.2.16" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net462' or '$(TargetFramework)'=='net472'">
@@ -25,5 +26,10 @@
 
   <ItemGroup>
     <None Remove="protobuf-net" />
+    <None Remove="K4os.Compression.LZ4" />
+    <None Remove="serializer\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="serializer\" />
   </ItemGroup>
 </Project>
