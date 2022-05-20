@@ -1,28 +1,28 @@
 ﻿<!-- MarkdownTOC -->
 
 - [Polly.Contrib.CachePolicy](#pollycontribcachepolicy)
-	- [Purpose](#purpose)
-	- [Roadmap](#roadmap)
-	- [Operation](#operation)
-	- [Syntax](#syntax)
-		- [Onboard cache target](#onboard-cache-target)
-		- [Build policy](#build-policy)
-			- [Builder overview](#builder-overview)
-			- [Use builder](#use-builder)
-		- [Configure policy](#configure-policy)
-			- [Configure cache policy with FixedAgingStrategy](#configure-cache-policy-with-fixedagingstrategy)
-			- [Configure multiple cache policies](#configure-multiple-cache-policies)
-		- [Use policy](#use-policy)
-	- [Parameters](#parameters)
-		- [CacheValue](#cachevalue)
-		- [ICacheProvider](#icacheprovider)
-		- [ILoggingProvider](#iloggingprovider)
-		- [IAgingStrategy](#iagingstrategy)
-	- [Usage recommendations](#usage-recommendations)
-		- [Cache response selectively](#cache-response-selectively)
-		- [Cache null value](#cache-null-value)
-		- [Cache migration](#cache-migration)
-		- [Test with chaos tools](#test-with-chaos-tools)
+  - [Purpose](#purpose)
+  - [Roadmap](#roadmap)
+  - [Operation](#operation)
+  - [Syntax](#syntax)
+    - [Onboard cache target](#onboard-cache-target)
+    - [Build policy](#build-policy)
+      - [Builder overview](#builder-overview)
+      - [Use builder](#use-builder)
+    - [Configure policy](#configure-policy)
+      - [Configure cache policy with FixedAgingStrategy](#configure-cache-policy-with-fixedagingstrategy)
+      - [Configure multiple cache policies](#configure-multiple-cache-policies)
+    - [Use policy](#use-policy)
+  - [Parameters](#parameters)
+    - [CacheValue](#cachevalue)
+    - [ICacheProvider](#icacheprovider)
+    - [ILoggingProvider](#iloggingprovider)
+    - [IAgingStrategy](#iagingstrategy)
+  - [Usage recommendations](#usage-recommendations)
+    - [Cache response selectively](#cache-response-selectively)
+    - [Cache null value](#cache-null-value)
+    - [Cache migration](#cache-migration)
+    - [Test with chaos tools](#test-with-chaos-tools)
 
 <!-- /MarkdownTOC -->
 
@@ -236,7 +236,7 @@ public abstract class CacheValue
     {
         Task<TResult> GetAsync<TResult>(string key, Context context)
             where TResult : CacheValue;
-        Task SetAsync<TResult>(string key, TResult value, TimeSpan expirationRelativeToNow, Context context)
+        Task SetAsync<TResult>(string key, TResult value, TimeSpan expirationRelativeToNow,  TimeSpan graceRelativeToNow, Context context)
             where TResult : CacheValue;
     }
 ```

@@ -239,7 +239,7 @@ namespace Polly.Contrib.CachePolicy.Tests
 
             Thread.Sleep(2000);
             this.cacheProvider.Verify(
-                provider => provider.SetAsync<ClassToCache>(It.IsAny<string>(), It.IsAny<ClassToCache>(), It.IsAny<TimeSpan>(), It.IsAny<Context>()),
+                provider => provider.SetAsync<ClassToCache>(It.IsAny<string>(), It.IsAny<ClassToCache>(), It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>(), It.IsAny<Context>()),
                 Times.Once);
         }
 
@@ -289,7 +289,7 @@ namespace Polly.Contrib.CachePolicy.Tests
 
             this.cacheProvider.Setup(provider => provider.GetAsync<ClassToCache>(It.IsAny<string>(), It.IsAny<Context>()))
                          .ReturnsAsync(valueToReturnFromClassToCache);
-            this.cacheProvider.Setup(provider => provider.SetAsync<ClassToCache>(It.IsAny<string>(), It.IsAny<ClassToCache>(), It.IsAny<TimeSpan>(), It.IsAny<Context>()))
+            this.cacheProvider.Setup(provider => provider.SetAsync<ClassToCache>(It.IsAny<string>(), It.IsAny<ClassToCache>(), It.IsAny<TimeSpan>(), It.IsAny<TimeSpan>(), It.IsAny<Context>()))
                          .Returns(Task.CompletedTask);
             this.agingStrategy.Setup(agingStrategy => agingStrategy.GetGraceRelativeToNow(It.IsAny<ClassToCache>(), It.IsAny<Context>()))
                               .Returns(TimeSpan.FromDays(1));

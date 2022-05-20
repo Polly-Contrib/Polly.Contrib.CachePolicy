@@ -84,7 +84,7 @@ namespace Polly.Contrib.CachePolicy.Providers.Cache
         }
 
         /// <inheritdoc/>
-        public async Task SetAsync<TResult>(string key, TResult value, TimeSpan expirationRelativeToNow, Context context)
+        public async Task SetAsync<TResult>(string key, TResult value, TimeSpan expirationRelativeToNow, TimeSpan graceTimeRelativeToNow, Context context)
             where TResult : CacheValue
         {
             var stopwatch = Stopwatch.StartNew();
@@ -93,6 +93,7 @@ namespace Polly.Contrib.CachePolicy.Providers.Cache
             Exception failureException = null;
             try
             {
+                value.SetGraceTimeStamp(graceTimeRelativeToNow);
                 await this.distributedCache.SetStringAsync(key, JsonConvert.SerializeObject(value), new DistributedCacheEntryOptions()
                 {
                     AbsoluteExpirationRelativeToNow = expirationRelativeToNow,

@@ -28,9 +28,10 @@ namespace Polly.Contrib.CachePolicy.Providers.Cache
         /// <param name="key">The key against which the data is stored in the cache.</param>
         /// <param name="value">The data to store in the cache.</param>
         /// <param name="expirationRelativeToNow">Expiration duration relative to now after which the cached item will be removed</param>
+        /// <param name="graceRelativeToNow">Grace duration relative to now after which the cached item will no longer be considered fresh and will only used for fall back to cache purpose (TTR).</param>
         /// <param name="context">The execution context.</param>
         /// <returns>Task handle</returns>
-        Task SetAsync<TResult>(string key, TResult value, TimeSpan expirationRelativeToNow, Context context)
+        Task SetAsync<TResult>(string key, TResult value, TimeSpan expirationRelativeToNow, TimeSpan graceRelativeToNow, Context context)
             where TResult : CacheValue;
     }
 }

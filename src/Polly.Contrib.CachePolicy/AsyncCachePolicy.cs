@@ -106,7 +106,6 @@ namespace Polly.Contrib.CachePolicy
                     if (result != null)
                     {
                         var graceRelativeToNow = this.agingStrategy.GetGraceRelativeToNow(result, context);
-                        result.SetGraceTimeStamp(graceRelativeToNow);
 
                         var expirationRelativeToNow = this.agingStrategy.GetExpirationRelativeToNow(result, context);
                         if (!expirationRelativeToNow.Equals(default(TimeSpan)))
@@ -115,7 +114,7 @@ namespace Polly.Contrib.CachePolicy
                             Task.Run(async () =>
 #pragma warning restore 4014
                             {
-                                await this.cacheProvider.SetAsync<TResult>(cacheKey, result, expirationRelativeToNow, context);
+                                await this.cacheProvider.SetAsync<TResult>(cacheKey, result, expirationRelativeToNow, graceRelativeToNow, context);
                             });
                         }
                     }

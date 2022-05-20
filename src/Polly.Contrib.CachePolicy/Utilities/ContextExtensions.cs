@@ -52,7 +52,7 @@ namespace Polly.Contrib.CachePolicy.Utilities
         /// </summary>
         /// <param name="context">The Polly execution context.</param>
         /// <returns>The cache key.</returns>
-        internal static string GetCacheKey(this Context context)
+        public static string GetCacheKey(this Context context)
         {
             if (context.TryGetValue(CacheKey, out object cacheKey))
             {
@@ -67,7 +67,7 @@ namespace Polly.Contrib.CachePolicy.Utilities
         /// </summary>
         /// <param name="context">The Polly execution context.</param>
         /// <returns>Operation name.</returns>
-        internal static string GetOperationName(this Context context)
+        public static string GetOperationName(this Context context)
         {
             if (context.TryGetValue(OperationName, out object operationName))
             {
