@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Polly.Contrib.CachePolicy.Providers.Logging
 {
+    /// <summary>
+    /// Logger for operational metrics. 
+    /// </summary>
     public interface IOperationalMetricLogger
     {
         /// <summary>

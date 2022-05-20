@@ -10,15 +10,14 @@ using Polly.Contrib.CachePolicy.Utilities;
 namespace Polly.Contrib.CachePolicy.Providers.Logging
 {
     /// <summary>
-    /// An implementation of <see cref="ILoggingProvider{TResult}"/>.
+    /// An implementation of <see cref="ILoggingProvider"/>.
     /// </summary>
-    /// <typeparam name="TResult">The type of return values this logging provider will handle.</typeparam>
     public class LoggingProvider : ILoggingProvider
     {
         /// <summary>
-        /// Configuration options for <see cref="LoggingProvider{TResult}"/>.
+        /// Configuration options for <see cref="LoggingProvider"/>.
         /// </summary>
-        private LoggingProviderOptions loggingProviderOptions;
+        private readonly LoggingProviderOptions loggingProviderOptions;
 
         /// <summary>
         /// Logger primarily used to log a metric for the purposes of perf-evaluation and monitoring.
@@ -31,9 +30,9 @@ namespace Polly.Contrib.CachePolicy.Providers.Logging
         private ILogger<LoggingProvider> logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoggingProvider{TResult}"/> class.
+        /// Initializes a new instance of the <see cref="LoggingProvider"/> class.
         /// </summary>
-        /// <param name="loggingProviderOptions">Configuration options for <see cref="LoggingProvider{TResult}"/>.</param>
+        /// <param name="loggingProviderOptions">Configuration options for <see cref="LoggingProvider"/>.</param>
         /// <param name="metricLogger">Logger primarily used to log a metric for the purposes of perf-evaluation and monitoring.</param>
         /// <param name="logger">Logger meant for message logging.</param>
         public LoggingProvider(

@@ -1,7 +1,7 @@
 ﻿namespace Polly.Contrib.CachePolicy.Providers.Logging
 {
     /// <summary>
-    /// Configuration option for <see cref="LoggingProvider{TResult}"/>.
+    /// Configuration option for <see cref="LoggingProvider"/>.
     /// </summary>
     public class LoggingProviderOptions
     {

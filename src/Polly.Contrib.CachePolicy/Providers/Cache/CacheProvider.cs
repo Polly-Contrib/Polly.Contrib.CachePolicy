@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
-using Polly;
 using Polly.Contrib.CachePolicy.Models;
 using Polly.Contrib.CachePolicy.Providers.Logging;
 using Polly.Contrib.CachePolicy.Utilities;
@@ -14,7 +13,6 @@ namespace Polly.Contrib.CachePolicy.Providers.Cache
     /// <summary>
     /// An implementation of <see cref="ICacheProvider"/>.
     /// </summary>
-    /// <typeparam name="CResult">The type of return values this policy will handle.</typeparam>
     public class CacheProvider : ICacheProvider
     {
         /// <summary>
@@ -28,7 +26,7 @@ namespace Polly.Contrib.CachePolicy.Providers.Cache
         private readonly ILoggingProvider loggingProvider;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CacheProvider{TResult}"/> class.
+        /// Initializes a new instance of the <see cref="CacheProvider"/> class.
         /// </summary>
         /// <param name="distributedCache">The cache from which to get the data.</param>
         /// <param name="loggingProvider">Provides the contract to logging <see cref="AsyncCachePolicy{TResult}"/> operations</param>

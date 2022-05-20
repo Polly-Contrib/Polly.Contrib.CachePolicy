@@ -64,6 +64,14 @@ namespace Polly.Contrib.CachePolicy
             this.loggingProvider = loggingProvider;
         }
 
+        /// <summary>
+        /// Execution logic for the async cache policy. 
+        /// </summary>
+        /// <param name="backendGet">Operation to get an item from backend services.</param>
+        /// <param name="context">Polly context.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <param name="continueOnCapturedContext">Whether to continue on captured context.</param>
+        /// <returns>Task of type which the data is retrieved.</returns>
         protected override async Task<TResult> ImplementationAsync(
                         Func<Context, CancellationToken, Task<TResult>> backendGet,
                         Context context,

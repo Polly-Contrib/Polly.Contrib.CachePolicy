@@ -8,7 +8,6 @@ namespace Polly.Contrib.CachePolicy.Providers.Logging
     /// <summary>
     /// Provides the contract to logging <see cref="AsyncCachePolicy{TResult}"/> operations.
     /// </summary>
-    /// <typeparam name="TResult">The type of return values this logging provider will handle.</typeparam>
     public interface ILoggingProvider
     {
         /// <summary>
@@ -39,8 +38,8 @@ namespace Polly.Contrib.CachePolicy.Providers.Logging
         /// <param name="key">The key against which the data is stored in the cache.</param>
         /// <param name="isSuccess">Whether the fetch function finished without any exception and error responses.</param>
         /// <param name="isFallbackToCache">Whether falling back to cache is being triggered.</param>
-        /// <param name="latencyInMilliSeconds">The overall latency for a single operation to fetch <see cref="TResult"/> from backend services with the option to fall back to cache.</param>
-        /// <param name="delegateFailureOutcome">The captured outcome of a single failure operation to fetch <see cref="TResult"/> from backend services with the option to fall back to cache.</param>
+        /// <param name="latencyInMilliSeconds">The overall latency for a single operation to fetch result from backend services with the option to fall back to cache.</param>
+        /// <param name="delegateFailureOutcome">The captured outcome of a single failure operation to fetch result from backend services with the option to fall back to cache.</param>
         /// <param name="context">The execution context.</param>
         void OnBackendGet<TResult>(string key, bool isSuccess, bool isFallbackToCache, long latencyInMilliSeconds, DelegateResult<TResult> delegateFailureOutcome, Context context)
             where TResult : CacheValue;

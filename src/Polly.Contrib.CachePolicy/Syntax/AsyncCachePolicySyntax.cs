@@ -10,7 +10,6 @@ namespace Polly.Contrib.CachePolicy
     /// <summary>
     /// A Polly cache policy which could be applied to asynchronous delegates.
     /// </summary>
-    /// <typeparam name="TResult">The type of return values this policy will handle.</typeparam>
     public partial class AsyncCachePolicy<TResult> : AsyncPolicy<TResult>
         where TResult : CacheValue
     {

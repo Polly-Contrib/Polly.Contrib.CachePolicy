@@ -24,7 +24,7 @@ namespace Polly.Contrib.CachePolicy.Syntax
         private const string ConfigKeyFormatPolicyEnabled = "AsyncCachePolicy:{0}:Enabled";
 
         /// <summary>
-        /// Configuration key for <see cref="LoggingProvider{TResult}"/>.
+        /// Configuration key for <see cref="LoggingProvider"/>.
         /// </summary>
         private const string ConfigKeyLoggingProvider = "AsyncCachePolicy:LoggingProvider";
 

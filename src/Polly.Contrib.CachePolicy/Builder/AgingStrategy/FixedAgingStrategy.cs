@@ -16,7 +16,7 @@ namespace Polly.Contrib.CachePolicy.Builder.AgingStrategy
         private FixedAgingStrategyOptions<TResult> fixedAgingStrategyOptions;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FixedAgingStrategy"/> class.
+        /// Initializes a new instance of the <see cref="FixedAgingStrategy{TResult}"/> class.
         /// </summary>
         public FixedAgingStrategy(IOptionsSnapshot<FixedAgingStrategyOptions<TResult>> fixedAgingStrategyOptions)
         {
