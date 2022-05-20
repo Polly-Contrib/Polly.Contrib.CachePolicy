@@ -4,14 +4,14 @@
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <AssemblyName>Polly.Contrib.CachePolicy</AssemblyName>
     <RootNamespace>Polly.Contrib.CachePolicy</RootNamespace>
-    <Version>0.2.0</Version>
-    <AssemblyVersion>0.0.0.0</AssemblyVersion>
-    <FileVersion>0.2.0.0</FileVersion>
-    <InformationalVersion>0.2.0.0</InformationalVersion>
-    <PackageVersion>0.2.0</PackageVersion>
+    <Version>1.0.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0.0</InformationalVersion>
+    <PackageVersion>1.0.0</PackageVersion>
     <Company>App vNext</Company>
-    <Copyright>Copyright (c) 2019, App vNext and contributors</Copyright>
-    <Description>Polly.Contrib.CachePolicy is a blank template for Polly.Contrib contributions, integrating with the Polly resilience project for .NET</Description>
+    <Copyright>Copyright (c) 2022, App vNext and contributors</Copyright>
+    <Description>The first release for Polly.Contrib.CachePolicy</Description>
     <DefaultLanguage>en-US</DefaultLanguage>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
