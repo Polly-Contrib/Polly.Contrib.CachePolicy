@@ -34,13 +34,19 @@
 
 <!-- /MarkdownTOC -->
 
-# Cache policy
+# Stale cache policy
 
 ## Purpose
-The Polly.Contrib.CachePolicy is an implementation of read-through cache, also known as the cache-aside pattern. It provides a resiliency feature of elegantly fallback to return stale cache value when downstream services return errors or throw exceptions. 
+
+This policy originates from Microsoft Teams product. As of 05/2022, Microsoft Teams has 150M DAU and 200M MAU. Microsoft Teams is the third central communication hub for all Office products (After Lync / Skype/Yammer). As a mission critical product, its resilience is at the heart of Team services.
+
+Teams services want to provide clients an elegant fallback experience during incident times. This policy elegantly fallbacks to stale cache value when downstream services return errors or throw exceptions. 
+
+For example, Teams services cache users' license information, with a fresh cache retention period of 1 day and stale cache retention period of 7 days. Normally, only the fresh cache is accessed. During incident times when services could not get latest license information from downstream services, it will use the stale cache value instead. 
+
 
 ## Motivation
-AsyncCachePolicy provides you the following capability:
+CachePolicy provides you the following capability:
 1. Stale cache: Fallback to cache based on customized exceptions or unexpected response code from downstream services. From past integration experience, stale cache could provide graceful fallback option in
 	* >99% scenarios for tenant level settings.
 	* ~95% scenarios for user level settings.
@@ -48,7 +54,7 @@ AsyncCachePolicy provides you the following capability:
 ![](imgs/resiliency-fallbackToCache.png)
 
 2. Various cache serialization strategy
-	* By default, the AsyncCachePolicy support Json-based serialization and protobuf-based serialization with LZ4Picker compression. You could also provide your own serializer if needed.
+	* By default, the CachePolicy support Json-based serialization and protobuf-based serialization with LZ4Picker compression. You could also provide your own serializer if needed.
 	* When compared with Json, Protobuf with LZ4Pickler combined will result in 
 	    - 65% reduction in object size
 		- 40% reduction in deserialization time
@@ -85,7 +91,7 @@ class TargetClassToOnboard
 ```
 
 #### Using Newtonsoft based serialization
-* To onboard it to AsyncCache policy, it needs to inherit the **CacheValue** abstract class
+* To onboard it to Cache policy, it needs to inherit the **CacheValue** abstract class
 
 ```
 class TargetClassToOnboard : CacheValue
