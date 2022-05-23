@@ -1,8 +1,8 @@
 ﻿<!-- MarkdownTOC -->
 
-- [Cache policy](#cache-policy)
-  - [Purpose](#purpose)
-  - [Motivation](#motivation)
+- [Stale cache policy](#stale-cache-policy)
+  - [Summary](#summary)
+  - [Comparison with Polly.Cache policy](#comparison-with-pollycache-policy)
   - [Roadmap](#roadmap)
   - [Operation](#operation)
   - [Syntax](#syntax)
@@ -36,7 +36,7 @@
 
 # Stale cache policy
 
-## Purpose
+## Summary
 
 This policy originates from Microsoft Teams product. As of 05/2022, Microsoft Teams has 150M DAU and 200M MAU. Microsoft Teams is the third central communication hub for all Office products (After Lync / Skype/Yammer). As a mission critical product, its resilience is at the heart of Team services.
 
@@ -44,23 +44,16 @@ Teams services want to provide clients an elegant fallback experience during inc
 
 For example, Teams services cache users' license information, with a fresh cache retention period of 1 day and stale cache retention period of 7 days. Normally, only the fresh cache is accessed. During incident times when services could not get latest license information from downstream services, it will use the stale cache value instead. 
 
-
-## Motivation
-CachePolicy provides you the following capability:
-1. Stale cache: Fallback to cache based on customized exceptions or unexpected response code from downstream services. From past integration experience, stale cache could provide graceful fallback option in
-	* >99% scenarios for tenant level settings.
-	* ~95% scenarios for user level settings.
-
-![](imgs/resiliency-fallbackToCache.png)
-
-2. Various cache serialization strategy
-	* By default, the CachePolicy support Json-based serialization and protobuf-based serialization with LZ4Picker compression. You could also provide your own serializer if needed.
-	* When compared with Json, Protobuf with LZ4Pickler combined will result in 
-	    - 65% reduction in object size
-		- 40% reduction in deserialization time
-		- 20% reduction in serialization time
-
-![](imgs/Protobuf-based-serialization.png)
+## Comparison with Polly.Cache policy
+* Polly already has a Polly.Cache policy https://github.com/App-vNext/Polly/wiki/Cache. When compared with Polly.Cache, Polly.Contrib.Cache policy has the following additional capabilities:
+  1. Stale cache: Fallback to cache based on customized exceptions or unexpected response code from downstream services. 
+  2. Various cache serialization strategy
+  	* By default, the CachePolicy support Json-based serialization and protobuf-based serialization with LZ4Picker compression. You could also provide your own serializer if needed.
+  	* When compared with Json, Protobuf with LZ4Pickler combined will result in 
+  	    - 65% reduction in object size
+  		- 40% reduction in deserialization time
+  		- 20% reduction in serialization time
+* Due to its use case, Polly.Contrib.Cache mostly works with distributed cache, not in-memory cache. 
 
 ## Roadmap
 1. Support caching value types. Currently all onboarding targets need to extend from the base CacheValue abstract class, thus must be reference types. 
