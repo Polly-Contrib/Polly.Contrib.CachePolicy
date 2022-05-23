@@ -37,7 +37,7 @@
 # Cache policy
 
 ## Purpose
-The Microsoft.Teams.ServicesHub.Polly.AsyncCachePolicy is an implementation of read-through cache, also known as the cache-aside pattern. It provides a resiliency feature of elegantly fallback to return stale cache value when downstream services return errors or throw exceptions. 
+The Polly.Contrib.CachePolicy is an implementation of read-through cache, also known as the cache-aside pattern. It provides a resiliency feature of elegantly fallback to return stale cache value when downstream services return errors or throw exceptions. 
 
 ## Motivation
 AsyncCachePolicy provides you the following capability:
