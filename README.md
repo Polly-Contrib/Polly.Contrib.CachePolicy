@@ -61,12 +61,12 @@ For example, Teams services cache users' license information, with a fresh cache
 
 ## Operation
 * This is a non-reactive policy with some reactive features (fallback option to return stale cache value). There are in total six conditions which could happen:
-1. When cache is fresh, it will directly return fresh cache value. 
-2. When cache is stale and the operation to get backend value succeeds, fetched backend value will be returned and then a background job will be kicked off for refreshing cache.
-3. When cache is stale and the operation to get backend value fails and the error condition (error results or exception being thrown out) matches the predeclared error condition, stale cache value will be returned. 
-4. When cache is stale and the operation to get backend value fails and the error condition (error results or exception being thrown out) does not match the predeclared error condition, the operation will fail (error results being returned or exception bubble up).
-5. When cache is missing and the operation to get backend value succeeds, fetched backend value will be returned and then a background job will be kicked off for adding cache.
-6. When cache is missing and the operation to get backend value fails, the operation will fail (null being returned or exception bubble up).
+  1. When cache is fresh, it will directly return fresh cache value. 
+  2. When cache is stale and the operation to get backend value succeeds, fetched backend value will be returned and then a background job will be kicked off for refreshing cache.
+  3. When cache is stale and the operation to get backend value fails and the error condition (error results or exception being thrown out) matches the predeclared error condition, stale cache value will be returned. 
+  4. When cache is stale and the operation to get backend value fails and the error condition (error results or exception being thrown out) does not match the predeclared error condition, the operation will fail (error results being returned or exception bubble up).
+  5. When cache is missing and the operation to get backend value succeeds, fetched backend value will be returned and then a background job will be kicked off for adding cache.
+  6. When cache is missing and the operation to get backend value fails, the operation will fail (null being returned or exception bubble up).
 
 * Please see the following flow chart for more details.  
 
@@ -512,9 +512,9 @@ public TargetClassToOnboard FetchFromBackend(...)
 ### Cache migration
 * Benefits: Consumers of this package are not required to deprecate their existing cache to onboard to the policy. 
 * Since onboarding this policy will not require a remapping of cache keys. There are three possible scenarios which could happen: 
-1. Cache hit and an old cache item (which are set before onboarding and graceTimeStamp == null) is returned. The cache item will always be considered fresh until they get expired. This design is for avoiding massive volume of cache miss and requests to backend. 
-2. Cache hit and a new cache item is returned, it's graceTimeStamp will be compared with the current timeStamp to determine whether to query backend and update cache. 
-3. Cache miss, a query will be issued to backend and cache will be updated. 
+  1. Cache hit and an old cache item (which are set before onboarding and graceTimeStamp == null) is returned. The cache item will always be considered fresh until they get expired. This design is for avoiding massive volume of cache miss and requests to backend. 
+  2. Cache hit and a new cache item is returned, it's graceTimeStamp will be compared with the current timeStamp to determine whether to query backend and update cache. 
+  3. Cache miss, a query will be issued to backend and cache will be updated. 
 
 ```
         /// <summary>
