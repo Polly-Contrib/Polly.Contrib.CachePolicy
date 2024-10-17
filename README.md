@@ -48,7 +48,7 @@ For example, Teams services cache users' license information, with a fresh cache
 * Polly already has a Polly.Cache policy https://github.com/App-vNext/Polly/wiki/Cache. When compared with Polly.Cache, Polly.Contrib.Cache policy has the following additional capabilities:
   1. Stale cache: Fallback to cache based on customized exceptions or unexpected response code from downstream services. 
   2. Various cache serialization strategy
-  	* By default, the CachePolicy support Json-based serialization and protobuf-based serialization with LZ4Picker compression. You could also provide your own serializer if needed.
+  	* By default, the CachePolicy support Json-based serialization and protobuf-based serialization with [LZ4Pickler](https://github.com/MiloszKrajewski/K4os.Compression.LZ4#pickler) compression. You could also provide your own serializer if needed.
   	* When compared with Json, Protobuf with LZ4Pickler combined will result in 
   	    - 65% reduction in object size
   		- 40% reduction in deserialization time
